@@ -25,7 +25,7 @@ class TransformerDecoderLayer(nn.Module):
         normed_attn_out = self.attn_norm(decoder_attention + dec_residual)
 
         dec_residual = normed_attn_out
-        attn_out, _ = self.attention(normed_attn_out, enc_output, enc_output)
+        attn_out, _ = self.attention(normed_attn_out, enc_output, enc_output, enc_mask)
         normed_attn_out = self.attn_norm(attn_out + dec_residual)
 
         ffn_residual = normed_attn_out
