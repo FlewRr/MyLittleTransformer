@@ -69,7 +69,7 @@ class MultiHeadAttention(nn.Module):
         query_proj = query_proj.reshape(tgt_len, bsz * self.nhead, head_dim)
         key_proj = key_proj.reshape(src_len, bsz * self.nhead, head_dim)
         value_proj = value_proj.reshape(src_len, bsz * self.nhead, head_dim)
-
+    
 
         attention_output, attention_output_weigths = self.attention_layer(
             query_proj, key_proj, value_proj, attn_mask)

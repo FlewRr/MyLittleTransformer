@@ -51,8 +51,11 @@ value = torch.randn((src_size, batch_size, embedding_size))
 mask = torch.randn((batch_size * nheads, target_size, src_size)).uniform_() > 0.8
 
 mha = multi_head_attention.MultiHeadAttention(embedding_size, nheads)
-attention_output, attention_output_weights = mha(query, keys, value, mask)
-print(attention_output.shape, attention_output_weights.shape)
+mha_torch = nn.MultiheadAttention(embedding_size, nheads)
+attention_output, attention_output_weights = mha(query, keys, value)
+attention_output_torch, attention_output_weights_torch = mha_torch(query, keys, value)
+print(attention_output_weights_torch)
+print(attention_output_weights)
 #_________________________________________________________
 
 comment here to use"""
