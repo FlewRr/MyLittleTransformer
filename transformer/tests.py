@@ -3,6 +3,7 @@ import encoder
 import multi_head_attention 
 import attention
 import encoder
+import decoder
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -73,10 +74,29 @@ embedding_size = 64
 nhead = 2
 ffn_size = 128
 x = torch.randn((batch_size, target_size, embedding_size))
-e = encoder.TransformerEncoder(embedding_size, nhead, ffn_size)
+e = encoder.TransformerEncoderLayer(embedding_size, nhead, ffn_size)
 
 encoder_result = e(x)
 print(x.shape == encoder_result.shape)
+#_________________________________________________________
+
+comment here to use"""
+
+
+""" comment here to use
+
+#______________TESTS FOR TRANSFORMER DECODER_____________
+
+batch_size = 1
+target_size = 256
+embedding_size = 64
+nhead = 2
+ffn_size = 128
+x = torch.randn((batch_size, target_size, embedding_size))
+e = decoder.TransformerDecoderLayer(embedding_size, nhead, ffn_size)
+
+decoder_result = e(x, encoder_result)
+print(x.shape == decoder_result.shape)
 #_________________________________________________________
 
 comment here to use"""
