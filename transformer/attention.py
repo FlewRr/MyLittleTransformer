@@ -10,7 +10,7 @@ class Scaled_Dot_Product_Attention(nn.Module):
         self.query_size = query_size
         self.scale = 1 / math.sqrt(query_size)
         self.softmax = nn.Softmax(dim=-1)
-        self.dropout = dropout
+        self.dropout = nn.Dropout(p=dropout)
     
     def forward(self, 
                 query : torch.Tensor,
@@ -52,7 +52,7 @@ class Scaled_Dot_Product_Attention(nn.Module):
         if attn_mask is not None: 
             attention = torch.masked_fill(attention, attn_mask == 0, -1e9) # apply mask to the attention tensor
         
-        attention_probs = F.dropout(self.softmax(self.scale * attention), p=self.dropout)
+        attention_probs = self.dropout(self.softmax(self.scale * attention))
         output_attention = attention_probs @ value # [T, B, B] * [T, B, V] --> [T, B, V]
         
         return output_attention, attention_probs

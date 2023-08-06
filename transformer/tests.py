@@ -2,6 +2,8 @@ import  decoder
 import encoder
 import multi_head_attention 
 import attention
+import encoder
+import decoder
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -51,8 +53,50 @@ value = torch.randn((src_size, batch_size, embedding_size))
 mask = torch.randn((batch_size * nheads, target_size, src_size)).uniform_() > 0.8
 
 mha = multi_head_attention.MultiHeadAttention(embedding_size, nheads)
-attention_output, attention_output_weights = mha(query, keys, value, mask)
-print(attention_output.shape, attention_output_weights.shape)
+mha_torch = nn.MultiheadAttention(embedding_size, nheads)
+attention_output, attention_output_weights = mha(query, keys, value)
+attention_output_torch, attention_output_weights_torch = mha_torch(query, keys, value)
+print(attention_output_weights_torch)
+print(attention_output_weights)
+#_________________________________________________________
+
+comment here to use"""
+
+
+
+""" comment here to use
+
+#______________TESTS FOR TRANSFORMER ENCODER_____________
+
+batch_size = 1
+target_size = 256
+embedding_size = 64
+nhead = 2
+ffn_size = 128
+x = torch.randn((batch_size, target_size, embedding_size))
+e = encoder.TransformerEncoderLayer(embedding_size, nhead, ffn_size)
+
+encoder_result = e(x)
+print(x.shape == encoder_result.shape)
+#_________________________________________________________
+
+comment here to use"""
+
+
+""" comment here to use
+
+#______________TESTS FOR TRANSFORMER DECODER_____________
+
+batch_size = 1
+target_size = 256
+embedding_size = 64
+nhead = 2
+ffn_size = 128
+x = torch.randn((batch_size, target_size, embedding_size))
+e = decoder.TransformerDecoderLayer(embedding_size, nhead, ffn_size)
+
+decoder_result = e(x, encoder_result)
+print(x.shape == decoder_result.shape)
 #_________________________________________________________
 
 comment here to use"""
