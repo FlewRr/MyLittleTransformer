@@ -8,7 +8,7 @@ class PointwiseFFN(nn.Module):
         self.relu = nn.ReLU()
         self.linear2 = nn.Linear(hidden_dim,inp_dim)
         self.layer_norm = nn.LayerNorm(inp_dim, eps=1e-6)
-        self.dropout = dropout
+        self.dropout = nn.Dropout(p=dropout)
     
     
     def forward(self, x):
@@ -17,3 +17,4 @@ class PointwiseFFN(nn.Module):
         x = self.dropout(self.linear2(x)) + residual
         
         return self.layer_norm(x)
+    

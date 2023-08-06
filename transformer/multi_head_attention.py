@@ -22,7 +22,7 @@ class MultiHeadAttention(nn.Module):
         self.attention_layer = attention_layer
 
         if attention_layer is None:
-            self.attention_layer = attention.Scaled_Dot_Product_Attention(embed_dim)
+            self.attention_layer = attention.Scaled_Dot_Product_Attention(embed_dim, dropout)
 
         if InputProjectContainer:
             self.query_proj, self.key_proj, self.value_proj = InputProjectContainer

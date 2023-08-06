@@ -2,6 +2,7 @@ import  decoder
 import encoder
 import multi_head_attention 
 import attention
+import encoder
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -56,6 +57,26 @@ attention_output, attention_output_weights = mha(query, keys, value)
 attention_output_torch, attention_output_weights_torch = mha_torch(query, keys, value)
 print(attention_output_weights_torch)
 print(attention_output_weights)
+#_________________________________________________________
+
+comment here to use"""
+
+
+
+""" comment here to use
+
+#______________TESTS FOR TRANSFORMER ENCODER_____________
+
+batch_size = 1
+target_size = 256
+embedding_size = 64
+nhead = 2
+ffn_size = 128
+x = torch.randn((batch_size, target_size, embedding_size))
+e = encoder.TransformerEncoder(embedding_size, nhead, ffn_size)
+
+encoder_result = e(x)
+print(x.shape == encoder_result.shape)
 #_________________________________________________________
 
 comment here to use"""
