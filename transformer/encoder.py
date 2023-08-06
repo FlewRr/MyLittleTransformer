@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from attention import Scaled_Dot_Product_Attention
 from multi_head_attention import MultiHeadAttention
-from utils import PointwiseFFN, PostitionalEncoding
+from utils import PointwiseFFN, PositionalEncoding
 
 
 class TransformerEncoderLayer(nn.Module):
@@ -31,10 +31,10 @@ class TransformerEncoder(nn.Module):
     def __init__(self, inp_voc, emb_size, pad_idx, hidden_dim, num_heads, dropout=0.1, n_position=200, n_layers=6):
         super().__init__()  
         self.emb_inp = nn.Embedding(len(inp_voc), emb_size, padding_idx=pad_idx)
-        self.positional_encoding = PostitionalEncoding(hidden_dim, n_position, dropout)
+        self.positional_encoding = PositionalEncoding(hidden_dim, n_position, dropout)
         self.inp_voc = inp_voc
         self.emb_size = emb_size
-        self.layer_norm = nn.LayerNorm
+        self.layer_norm = nn.LayerNorm(emb_size)
         self.dropout = nn.Dropout(p=dropout)
 
         self.enc = nn.ModuleList([
@@ -57,8 +57,6 @@ class TransformerEncoder(nn.Module):
 
     
     def encode(self, input, **flags):
-        
-        enc_self_attn_list = []
 
         embed = self.positional_encoding(self.emb_inp(input))
         embed = self.layer_norm(self.dropout(embed))

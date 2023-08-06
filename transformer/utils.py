@@ -21,7 +21,7 @@ class PointwiseFFN(nn.Module):
         return self.layer_norm(x)
     
 
-class PostitionalEncoding(nn.Module):
+class PositionalEncoding(nn.Module):
     def __init__(self, hidden_dim, n_position=200, dropout=0.1):
         super().__init__()
 
