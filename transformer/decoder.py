@@ -36,7 +36,7 @@ class TransformerDecoderLayer(nn.Module):
     
 
 class TransformerDecoder(nn.Module):
-    def __init__(self, out_voc, emb_size, hidden_dim, num_heads, pad_idx, dropout=0.1, n_position=200, n_layers=6):
+    def __init__(self, out_voc, emb_size, hidden_dim, num_heads, pad_idx=None, dropout=0.1, n_position=200, n_layers=6):
         super().__init__()
 
         self.emb_out = nn.Embedding(len(out_voc), emb_size, padding_idx=pad_idx)
@@ -52,7 +52,12 @@ class TransformerDecoder(nn.Module):
         ])
 
 
-    def forward(self, target_seq, target_mask, enc_output, src_mask):
+    def forward(self, 
+                target_seq, 
+                target_mask, 
+                enc_output, 
+                src_mask):
+        
         
         dec_output = self.emb_out(target_seq)
         dec_output = self.positional_encoding(dec_output)
