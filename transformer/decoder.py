@@ -40,7 +40,7 @@ class TransformerDecoder(nn.Module):
         super().__init__()
 
         self.emb_out = nn.Embedding(len(out_voc), emb_size, padding_idx=pad_idx)
-        self.positional_encoding = PositionalEncoding(hidden_dim, n_position, dropout)
+        self.positional_encoding = PositionalEncoding(emb_size, n_position, dropout)
         self.out_voc = out_voc
         self.emb_size = emb_size
         self.layer_norm = nn.LayerNorm(emb_size)

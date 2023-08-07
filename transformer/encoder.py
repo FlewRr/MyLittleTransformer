@@ -8,14 +8,14 @@ from typing import Optional
 class TransformerEncoderLayer(nn.Module):
     """Auxillary class made up of self-attention and feedforward network
         
-        Args:
-            emb_size: the number of expected features in the input (required)
-            num_heads: the number of heads in the multi-head-attention models (required)
-            ffn_size: the dimension of feedforward network (required)
-            dropout: the dropout value (default=0.1)
-            attention_dropout: the dropout value used in the attention models (default=0.1)
-            batch_first: If Tru, then the input and output tensors are provided
-            as [batch, seq, feature]. Default: ``False`` [seq, batch, feature].
+    Args:
+        emb_size: the number of expected features in the input (required)
+        num_heads: the number of heads in the multi-head-attention models (required)
+        ffn_size: the dimension of feedforward network (required)
+        dropout: the dropout value (default=0.1)
+        attention_dropout: the dropout value used in the attention models (default=0.1)
+        batch_first: If Tru, then the input and output tensors are provided
+        as [batch, seq, feature]. Default: ``False`` [seq, batch, feature].
    
     """
     def __init__(self, emb_size, num_heads, ffn_size, dropout=0.1, attention_dropout=0.1, batch_first=False):
@@ -38,7 +38,7 @@ class TransformerEncoderLayer(nn.Module):
 
         Shape:
             source: [S, E] for unbatched input, [S, N, E] for batched (batch_first=False), [N, S, E] (batch_first=True) 
-            attn_mask: [S, S] or [N * num_heads, S, S]
+            attn_mask: [1, S, S] or [N, S, S]
         """
         residual = source
         attention_out, _ = self.attention(source, source, source, attn_mask) # [L, N, E] --> [L, N, E]
@@ -53,10 +53,19 @@ class TransformerEncoderLayer(nn.Module):
     
 
 class TransformerEncoder(nn.Module):
+    """TransformerEncoder is the stack of N Encoder Layers.
+
+    Args:
+        inp_voc: vocabulary used to get embedding of source sequence (required)
+        emb_size: the number of expected features in the input (required)
+        hidden_dim: the number of dimensions used in the feedforward network inside encoder layer (required)
+        num_heads: the number of heads used in the multi-head-attention models
+        pad_idx: padding mask for embeddings
+    """
     def __init__(self, inp_voc, emb_size,  hidden_dim, num_heads, pad_idx=None, dropout=0.1, n_position=200, n_layers=6):
         super().__init__()  
         self.emb_inp = nn.Embedding(len(inp_voc), emb_size, padding_idx=pad_idx)
-        self.positional_encoding = PositionalEncoding(hidden_dim, n_position, dropout)
+        self.positional_encoding = PositionalEncoding(emb_size, n_position, dropout)
         self.inp_voc = inp_voc
         self.emb_size = emb_size
         self.layer_norm = nn.LayerNorm(emb_size)
@@ -68,30 +77,29 @@ class TransformerEncoder(nn.Module):
         ])
 
     
-    def forward(self, input, src_mask=None):
+    def forward(self, 
+                input : torch.Tensor, 
+                src_mask : Optional[torch.Tensor] = None):
+        """Pass the input through the encoder layers in turn.
+        
+        Args:
+            input: the sequence to the encoder (required)
+            src_mask: the mask for the source sequence (optional)
 
-        embed = self.positional_encoding(self.emb_inp(input))
+        Shape:  
+            input: [S, O] for unbatched input, [S, N, O] for batched (batch_first=False), [N, S, O] (batch_first=True).
+            src_mask: [1, S, S] or [N, S, S]
+        """
+
+        embed = self.positional_encoding(self.emb_inp(input)) # [..,, O] --> [..., E]
         embed = self.layer_norm(self.dropout(embed))
         
-        encoder_state = embed 
+        encoder_state = embed
 
         for encoder_layer in self.enc:
-            encoder_state = encoder_layer(encoder_state)
+            encoder_state = encoder_layer(encoder_state, src_mask)
 
         return encoder_state
-
-    
-    def encode(self, input, **flags):
-
-        embed = self.positional_encoding(self.emb_inp(input))
-        embed = self.layer_norm(self.dropout(embed))
-        
-        encoder_state = embed 
-
-        for encoder_layer in self.enc:
-            encoder_state = encoder_layer(encoder_state)
-
-        return encoder_state 
     
 
 # if __name__ == "__main__":
