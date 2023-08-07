@@ -20,12 +20,13 @@ class Scaled_Dot_Product_Attention(nn.Module):
                 ) -> Tuple[torch.Tensor, torch.Tensor]:
         """
         Computes attention response and weights
-        :param query: the query of the attention function, float32 [T, B, E]
-        :param key: the keys of the attention function, float32 [S, B, E]
-        :param value: the values of the attention function, float32 [S, B, E]
-        :returns: output_attention[batch_size, enc_size], attention_probs[batch_size, ninp]
-            - output_attention - attention response vector i.e. scaled dot-product attention
-            - attention_probs - attention weights after softmax
+        Args:
+            query: the query of the attention function, float32 [T, N, E]
+            key: the keys of the attention function, float32 [S, N, E]
+            value: the values of the attention function, float32 [S, N, E]
+        Outputs:
+            output_attention - attention response vector i.e. scaled dot-product attention [N, T, S]
+            attention_probs - attention weights after softmax [N, T, E]
         """
         
         assert query.size(-1) == key.size(-1) == value.size(-1), "The feature dim of query, key, value must be equal."
@@ -47,12 +48,12 @@ class Scaled_Dot_Product_Attention(nn.Module):
 
         query, key, value = query.transpose(-2, -3), key.transpose(-2, -3), value.transpose(-2, -3)
         
-        attention = query @ key.transpose(-2, -1) # [S, B, E] * [T, E, B] --> [B, T, S]
-    
+        attention = query @ key.transpose(-2, -1)
+
         if attn_mask is not None: 
             attention = torch.masked_fill(attention, attn_mask == 0, -1e9) # apply mask to the attention tensor
         
         attention_probs = self.dropout(self.softmax(self.scale * attention))
-        output_attention = attention_probs @ value # [T, B, B] * [T, B, V] --> [T, B, V]
+        output_attention = attention_probs @ value # [N, T, S]
         
         return output_attention, attention_probs

@@ -39,6 +39,17 @@ class PositionalEncoding(nn.Module):
         return self.dropout(x + self.pos_table[x.size(0)])
     
 
+
+def get_pad_mask(seq, pad_idx):
+    return (seq != pad_idx).unsqueeze(-2)
+
+
+def get_subsequent_mask(seq):
+    _, len = seq.size()
+    subsequent_mask = (1 - torch.triu(
+        torch.ones((1, len, len), device=seq.device), diagonal=1)).bool()
+    return subsequent_mask
+
 # if __name__ == "__main__":
 #     pe = PostitionalEncoding(4, 200)
 #     x = torch.randn((11, 19, 4))
