@@ -54,11 +54,3 @@ def get_subsequent_mask(seq):
 #     pe = PostitionalEncoding(4, 200)
 #     x = torch.randn((11, 19, 4))
 #     print(pe(x).shape)
-
-
-"""
-TO DO:
-1. bit_mask - function to create bit mask for padding
-2. bit_dec_mask - function to create bit mask for decoder
-3. come up with better names for functions above
-"""

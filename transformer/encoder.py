@@ -59,8 +59,11 @@ class TransformerEncoder(nn.Module):
         inp_voc: vocabulary used to get embedding of source sequence (required)
         emb_size: the number of expected features in the input (required)
         hidden_dim: the number of dimensions used in the feedforward network inside encoder layer (required)
-        num_heads: the number of heads used in the multi-head-attention models
-        pad_idx: padding mask for embeddings
+        num_heads: the number of heads used in the multi-head-attention models (required)
+        pad_idx: padding mask for embeddings (required)
+        dropout: dropout parameter (default=0.1)
+        n_position: number of position used in the positional encoding (default=200)
+        n_layers: number of layers (default=6)
     """
     def __init__(self, inp_voc, emb_size,  hidden_dim, num_heads, pad_idx=None, dropout=0.1, n_position=200, n_layers=6):
         super().__init__()  

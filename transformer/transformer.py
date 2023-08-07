@@ -46,7 +46,7 @@ class Transformer(nn.Module):
     
 
     def _reset_parameters(self):
-        r"""Initiate parameters in the transformer model."""
+        """Initiate parameters in the transformer model."""
 
         for p in self.parameters():
             if p.dim() > 1:
