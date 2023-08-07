@@ -48,12 +48,12 @@ class MultiHeadAttention(nn.Module):
             attn_mask : 3D mask that prevents attention to certain positions - (BoolTensor, optional)
         Shape:
             -Inputs:
-                - query : [L, N, E]
+                - query : [T, N, E]
                 - key : [S, N, E]
                 - value : [S, N, E]
             -Outputs:
-                - attention_output : [L, N, E]
-                - attention_output_weights (probs) : [N * H, L, S]
+                - attention_output : [T, N, E] or [N, T, E] if batch_first=True
+                - attention_output_weights (probs) : [N * H, T, S]
         """
 
         if self.batch_first:
@@ -66,17 +66,17 @@ class MultiHeadAttention(nn.Module):
         assert embed_dim % self.nhead == 0, "embed_dim must be divisible by the number of heads"
         head_dim = embed_dim // self.nhead
         
-        query_proj = query_proj.reshape(tgt_len, bsz * self.nhead, head_dim)
-        key_proj = key_proj.reshape(src_len, bsz * self.nhead, head_dim)
-        value_proj = value_proj.reshape(src_len, bsz * self.nhead, head_dim)
+        query_proj = query_proj.reshape(tgt_len, bsz * self.nhead, head_dim) # [T, N * n_heads, E // n_heads]
+        key_proj = key_proj.reshape(src_len, bsz * self.nhead, head_dim) # [S, N * n_heads, E // n_heads]
+        value_proj = value_proj.reshape(src_len, bsz * self.nhead, head_dim) # [S, N * n_heads, E // n_heads]]
     
 
         attention_output, attention_output_weigths = self.attention_layer(
-            query_proj, key_proj, value_proj, attn_mask)
-        attention_output = attention_output.reshape(tgt_len, bsz, embed_dim)
-        attention_output = self.output_proj(attention_output)
+            query_proj, key_proj, value_proj, attn_mask) # [N * n_heads, T, S]
+        attention_output = attention_output.reshape(tgt_len, bsz, embed_dim) # [T, N, E]
+        attention_output = self.output_proj(attention_output) # [T, N, E]
 
         if self.batch_first:
-            attention_output = attention_output.transpose(-3, -2)
+            attention_output = attention_output.transpose(-3, -2)  # [N, T, E]
 
         return attention_output, attention_output_weigths

@@ -41,15 +41,15 @@ class TransformerEncoderLayer(nn.Module):
             attn_mask: [1, S, S] or [N, S, S]
         """
         residual = source
-        attention_out, _ = self.attention(source, source, source, attn_mask) # [L, N, E] --> [L, N, E]
+        attention_out, _ = self.attention(source, source, source, attn_mask) # [S, N, E] --> [S, N, E]
         normed_attention_out = self.attn_norm(attention_out + residual)
-        enc_self_attention = normed_attention_out # to be returned
+        # enc_self_attention = normed_attention_out
 
         ffn_residual = normed_attention_out
-        ffn_out = self.ffn(normed_attention_out)
+        ffn_out = self.ffn(normed_attention_out) # [S, N, E] --> [S, N, E]
         normed_ffn_out = self.ffn_norm(ffn_out + ffn_residual)
         
-        return normed_ffn_out, enc_self_attention
+        return normed_ffn_out # [S, N, E]
     
 
 class TransformerEncoder(nn.Module):
@@ -99,7 +99,7 @@ class TransformerEncoder(nn.Module):
         for encoder_layer in self.enc:
             encoder_state = encoder_layer(encoder_state, src_mask)
 
-        return encoder_state
+        return encoder_state # [S, N, E]
     
 
 # if __name__ == "__main__":
