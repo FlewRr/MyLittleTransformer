@@ -7,7 +7,7 @@ import attention
 class MultiHeadAttention(nn.Module):
     def __init__(self, embed_dim, nhead, dropout=0.0, batch_first=False, InputProjectContainer = None, 
                 output_proj=None, attention_layer=None):
-        # matrices [n_heads, model_size, (query, key, value)_size]
+
         super().__init__()
 
         self.embed_dim = embed_dim
@@ -15,10 +15,6 @@ class MultiHeadAttention(nn.Module):
         self.dropout = dropout
         self.batch_first = batch_first
 
-        # linear -- input_proj
-        # attention layer -- scaled dot product attention
-        # linear -- output_proj
-        
         self.attention_layer = attention_layer
 
         if attention_layer is None:
@@ -39,13 +35,12 @@ class MultiHeadAttention(nn.Module):
                 key : torch.Tensor, 
                 value : torch.Tensor,
                 attn_mask : Optional[torch.Tensor] = None):
-
         """
         Args:
-            query : The query of the attention funtion - (Tensor)
-            key : The key of the attention function - (Tensor)
-            value : The value of the attention function - (Tensor)
-            attn_mask : 3D mask that prevents attention to certain positions - (BoolTensor, optional)
+            query : The query of the attention funtion - (Tensor).
+            key : The key of the attention function - (Tensor).
+            value : The value of the attention function - (Tensor).
+            attn_mask : 3D mask that prevents attention to certain positions - (BoolTensor, optional).
         Shape:
             -Inputs:
                 - query : [T, N, E]

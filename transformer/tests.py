@@ -10,7 +10,7 @@ import torch.nn.functional as F
 
 
 
-#"""comment here to use
+"""comment here to use
 
 #___________________TESTS FOR ATTENTION___________________ 
 batch_size = 64
@@ -34,7 +34,7 @@ print(attention2[1].shape)
 
 #_________________________________________________________
 
-#comment here to use """
+comment here to use """
 
 """ comment here to use
 

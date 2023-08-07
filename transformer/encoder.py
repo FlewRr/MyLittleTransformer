@@ -15,7 +15,7 @@ class TransformerEncoderLayer(nn.Module):
         dropout: the dropout value (default=0.1)
         attention_dropout: the dropout value used in the attention models (default=0.1)
         batch_first: If Tru, then the input and output tensors are provided
-        as [batch, seq, feature]. Default: ``False`` [seq, batch, feature].
+        as [batch, seq, feature]. Default: False [seq, batch, feature].
    
     """
     def __init__(self, emb_size, num_heads, ffn_size, dropout=0.1, attention_dropout=0.1, batch_first=False):
@@ -56,16 +56,19 @@ class TransformerEncoder(nn.Module):
     """TransformerEncoder is the stack of N Encoder Layers.
 
     Args:
-        inp_voc: vocabulary used to get embedding of source sequence (required)
-        emb_size: the number of expected features in the input (required)
-        hidden_dim: the number of dimensions used in the feedforward network inside encoder layer (required)
-        num_heads: the number of heads used in the multi-head-attention models (required)
-        pad_idx: padding mask for embeddings (required)
-        dropout: dropout parameter (default=0.1)
-        n_position: number of position used in the positional encoding (default=200)
-        n_layers: number of layers (default=6)
+        inp_voc: vocabulary used to get embedding of source sequence (required).
+        emb_size: the number of expected features in the input (required).
+        hidden_dim: the number of dimensions used in the feedforward network inside encoder layer (required).
+        num_heads: the number of heads used in the multi-head-attention models (required).
+        pad_idx: padding mask for embeddings (required).
+        dropout: dropout parameter (default=0.1).
+        n_position: number of position used in the positional encoding (default=200).
+        n_layers: number of layers (default=6).
+        batch_first: If Tru, then the input and output tensors are provided.
+        as [batch, seq, feature]. Default: False [seq, batch, feature].
+    
     """
-    def __init__(self, inp_voc, emb_size,  hidden_dim, num_heads, pad_idx=None, dropout=0.1, n_position=200, n_layers=6):
+    def __init__(self, inp_voc, emb_size,  hidden_dim, num_heads, pad_idx=None, dropout=0.1, n_position=200, n_layers=6, batch_first=False):
         super().__init__()  
         self.emb_inp = nn.Embedding(len(inp_voc), emb_size, padding_idx=pad_idx)
         self.positional_encoding = PositionalEncoding(emb_size, n_position, dropout)
@@ -75,7 +78,8 @@ class TransformerEncoder(nn.Module):
         self.dropout = nn.Dropout(p=dropout)
 
         self.enc = nn.ModuleList([
-            TransformerEncoderLayer(emb_size, num_heads, hidden_dim, dropout)
+            TransformerEncoderLayer(emb_size, num_heads, hidden_dim, dropout, 
+                                    attention_dropout=0.1, batch_first=batch_first)
             for _ in range(n_layers)
         ])
 
@@ -103,7 +107,3 @@ class TransformerEncoder(nn.Module):
             encoder_state = encoder_layer(encoder_state, src_mask)
 
         return encoder_state # [S, N, E]
-    
-
-# if __name__ == "__main__":
-#     enc = TransformerEncoder([1], 1, 0, 1, 1)

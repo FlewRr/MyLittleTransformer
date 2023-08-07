@@ -32,13 +32,13 @@ class TransformerDecoderLayer(nn.Module):
                 dec_mask : Optional[torch.Tensor] = None,
                 enc_mask : Optional[torch.Tensor] =None
                 ):
-        """Pass the inputs (and mask) through the decoder layer
+        """Pass the inputs (and mask) through the decoder layer.
 
         Args:
-            dec_input: the sequence to the decoder layer (required)
-            enc_output: the sequence from the last layer of encoder (required)
-            dec_mask: the mask for target sequence (dec_input) (optional)
-            enc_mask: the mask for enc_output sequence (optional)
+            dec_input: the sequence to the decoder layer (required).
+            enc_output: the sequence from the last layer of encoder (required).
+            dec_mask: the mask for target sequence (dec_input) (optional).
+            enc_mask: the mask for enc_output sequence (optional).
         
         Shape:
             dec_input: [T, N, E]
@@ -66,15 +66,15 @@ class TransformerDecoder(nn.Module):
     """TransformerDecoder is the stack of N Decoder Layers.
 
     Args:
-        out_voc: vocabulary used to get embedding of target sequence (required)
-        emb_size: the number of expected features in the input (required)
-        hidden_dim: the number of dimensions used in the feedforward network inside encoder layer (required)
-        num_heads: the number of heads used in the multi-head-attention models(required)
-        pad_idx: padding mask for embeddings (required)
-        dropout: dropout parameter (default=0.1)
-        n_position: number of position used in the positional encoding (default=200)
-        n_layers: number of layers (default=6)
-        batch_first: If True, then the input and output tensors are provided
+        out_voc: vocabulary used to get embedding of target sequence (required).
+        emb_size: the number of expected features in the input (required).
+        hidden_dim: the number of dimensions used in the feedforward network inside encoder layer (required).
+        num_heads: the number of heads used in the multi-head-attention models(required).
+        pad_idx: padding mask for embeddings (required).
+        dropout: dropout parameter (default=0.1).
+        n_position: number of position used in the positional encoding (default=200).
+        n_layers: number of layers (default=6).
+        batch_first: If True, then the input and output tensors are provided.
         as [batch, seq, feature]. Default: False [seq, batch, feature].
     """
     def __init__(self, out_voc, emb_size, hidden_dim, num_heads, pad_idx=None, dropout=0.1, n_position=200, n_layers=6, batch_first=False):
@@ -130,8 +130,4 @@ class TransformerDecoder(nn.Module):
                 dec_mask=target_mask, 
                 enc_mask=src_mask)  
         
-        return dec_output
-    
-
-# if __name__ == "__main__":
-#     dec = TransformerDecoder([1], 1, 1, 1, 0)
+        return dec_output # [T, N, E]
